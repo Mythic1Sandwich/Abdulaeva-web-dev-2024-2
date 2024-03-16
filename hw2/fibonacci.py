@@ -1,10 +1,12 @@
+cube = lambda x: x**3
+
 def fibonacci(n):
-    fib_list = [0, 1]
-    for i in range(2, n):
-        x = fib_list[i-1] + fib_list[i-2]
-        fib_list.append(x ** 3)  # Возводим число в куб перед добавлением в список
-    return fib_list
+    fib = [0, 1]
+    while len(fib) < n:
+        next = fib[-1] + fib[-2]
+        fib.append(next)
+    return fib
 
 if __name__ == '__main__':
     n = int(input())
-    print(fibonacci(n))
+    print(list(map(cube, fibonacci(n))))

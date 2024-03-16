@@ -21,7 +21,7 @@ def function_logger(log_file):
         return wrapper
     return decorator
 
-@function_logger('cha.log')
+@function_logger('the.log')
 def greeting_format(name):
     return f'Hello, {name}!'
 

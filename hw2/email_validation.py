@@ -1,4 +1,3 @@
-
 import re
 
 def is_valid_email(email):
@@ -8,8 +7,11 @@ def is_valid_email(email):
 def fun(N, emails):
     valid_emails = [email for email in emails if is_valid_email(email)]
     valid_emails.sort()
+    for email in valid_emails:
+        print(email)
     return valid_emails
 
 if __name__ == "__main__":
     N = int(input())
     emails = [input() for _ in range(N)]
+    fun(N, emails)

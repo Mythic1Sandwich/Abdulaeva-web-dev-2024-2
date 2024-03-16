@@ -13,7 +13,7 @@ if __name__ == '__main__':
     n, x = map(int, input().split())
     scores = []
     for _ in range(x):
-        subject_scores = list(map(int, input().split()))
+        subject_scores = list(map(float, input().split()))
         scores.append(subject_scores)
     result = compute_average_scores(scores)
     list=[]

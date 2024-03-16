@@ -15,10 +15,14 @@ def run_script(filename, input_data=None):
 
 test_data = {
     'fact': [
-        (5, 120)
+        (5, 120),
+        (1, 1),
+        (10,3628800)
     ],
     'fib': [
-        (5,[0, 1, 1, 8, 729])
+        (5,[0, 1, 1, 2, 3]),
+         (10,[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]),
+    
     ],
     'show': [
 (("Alice", "50000"), "Alice: 50000 R"),
@@ -53,7 +57,16 @@ test_data = {
 ([], 0),
 ([10, 20, 30, 40], 100),
 ([-1, -2, -3, -4], -10)
+],
+
+'greeting_format': [
+('John', 'Hello, John!')
+],
+'process_list': [
+([1, 2, 3, 4, 5], [1, 4, 27, 16, 125]),
+([-3, 0, 7, 8], [(-3)**3, 0**2, 7**3, 8**2])
 ]
+
 }
 
 from fact import fact_it
@@ -132,7 +145,10 @@ def test_sort_files(tmp_path):
     test_dir.mkdir()
     test_files = [
         "a.txt",
+        "b.py",
+        "c.py",
         "b.txt",
+        "a.py"
 ]
 
     for file in test_files:
@@ -142,8 +158,70 @@ def test_sort_files(tmp_path):
     sorted_files = sort_files(test_dir)
 
     expected_result = [
+        "a.py",
+        "b.py",
+        "c.py",
         "a.txt",
-        "b.txt",
+        "b.txt"
+        
     ]
 
     assert sorted_files == expected_result
+from log_decorator import greeting_format
+
+@pytest.mark.parametrize("input_data, expected", test_data['greeting_format'])
+def test_greeting_format(input_data, expected):
+    assert greeting_format(input_data) == expected
+def test_log_file_contents():
+    with open('the.log', 'r') as file:
+        lines = file.readlines()
+    assert len(lines) > 0
+    
+from plane_angle import Point
+from plane_angle import plane_angle
+def test_subtraction():
+    p1 = Point(1, 2, 3)
+    p2 = Point(4, 5, 6)
+    result = p1 - p2
+    assert result.x == -3
+    assert result.y == -3
+    assert result.z == -3
+
+def test_dot():
+    p1 = Point(1, 2, 3)
+    p2 = Point(4, 5, 6)
+    result = p1.dot(p2)
+    assert result == 32
+
+def test_cross():
+    p1 = Point(1, 2, 3)
+    p2 = Point(4, 5, 6)
+    result = p1.cross(p2)
+    assert result.x == -3
+    assert result.y == 6
+    assert result.z == -3
+
+def test_absolute():
+    p = Point(3, 4, 0)
+    result = p.absolute()
+    assert result == 5
+
+def test_plane_angle():
+    a = Point(0, 0, 0)
+    b = Point(1, 0, 0)
+    c = Point(0, 1, 0)
+    d = Point(0, 0, 1)
+    result = plane_angle(a, b, c, d)
+    assert result == 55
+from circle_square_mk import circle_square_mk
+from pytest import approx  
+@pytest.mark.parametrize("r, n, expected", [
+    (1, 1000, 3.14)
+])
+def test_circle_square_mk(r, n, expected):
+    estimated_square = circle_square_mk(r, n)
+    assert estimated_square == approx(expected, rel=0.1)
+from process_list import process_list
+@pytest.mark.parametrize("input_data, expected", test_data['process_list'])
+def test_process_list(input_data, expected):
+    assert process_list(input_data) == expected

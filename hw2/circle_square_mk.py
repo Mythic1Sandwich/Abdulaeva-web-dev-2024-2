@@ -15,14 +15,15 @@ def circle_square_mk(r, n):
     square_estimation = (2 * r)**2 * (count_inside / n)
     return square_estimation
 
-r = int(input())
-n = int(input())
-estimated_square = circle_square_mk(r, n)
-actual_square = math.pi * r**2
+if __name__ == '__main__':
+    r = int(input())
+    n = int(input())
+    estimated_square = circle_square_mk(r, n)
+    actual_square = math.pi * r**2
 
-print("Оценка площади:", estimated_square)
-print("Площадь по формуле:", actual_square)
-print("Погрешность:", abs(actual_square - estimated_square))
+    print("Оценка площади:", estimated_square)
+    print("Площадь по формуле:", actual_square)
+    print("Погрешность:", abs(actual_square - estimated_square))
 
 # погрешность расчета зависит от количества экспериментов 
 # 
