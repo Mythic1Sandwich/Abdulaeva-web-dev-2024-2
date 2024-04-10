@@ -1,0 +1,34 @@
+{% extends 'foundation.html' %}
+
+{% block content %}
+<div class="container-fluid">
+<h2 class="text-center">ВАЛИДАЦИЯ И ФОРМАТИРОВАНИЕ НОМЕРА ТЕЛЕФОНА</h1>
+<form class="row g-3" action="/phone" method="POST">
+
+    <div class="col-auto py-3">
+        <input type="text" class="form-control {% if error %} is-invalid {% endif %}" id="phone" placeholder="Введите номер" name="phone" value="{{ request.form['phone'] }}" aria-describedby="feedback" required>
+        {% if checked and error %}
+    <div class="invalid-feedback">
+       <p> {{ error }}</p>
+    </div>
+    {% endif %}
+    
+</form>
+<div class="col-auto py-3">
+    <button type="submit" class="btn btn-primary mb-3">Отправить</button>
+</div>
+    </div>
+    
+
+
+{% if checked and not error%}
+    <div class="alert alert-success">
+        <h5>Номер телефона подходит</h5>
+        <p>Результат форматирования номера: {{ formatted }}</p>
+    </div>
+
+{% endif %}
+</div>
+
+
+{% endblock %}

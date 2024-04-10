@@ -1,0 +1,38 @@
+{% extends 'foundation.html' %}
+
+{% block content %}
+<div class="row">
+<div class="col-6 mb-3 py-2">
+    <form class="form " method="POST">
+    <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">Ваш e-mail</label>
+    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" name="email" value="{{ request.form['email'] }}">
+    </div>
+    <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label">Ваш отзыв</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="feedback" value="{{ request.form['feedback'] }}"></textarea>
+    </div>
+   <button type="submit" class="btn btn-primary mb-3">Confirm identity</button>
+
+</div>
+
+<div class="col-6 mb-3 py-2">
+<div class="container-fluid">
+    <table class="table table-bordered border-primary">
+        <thead class="table-light">
+            <th scope="col">E-MAIL</th>
+            <th scope="col">ТЕКСТ ОТЗЫВА</th>
+        </thead>
+        <tbody>
+                <tr>
+                    <td>{{ request.form['email'] }}</td>
+                    <td>{{ request.form['feedback'] }}</td>
+                </tr>
+          
+         
+        </tbody>
+      </table>
+</div>
+</div>
+
+  {% endblock %}
