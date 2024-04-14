@@ -1,80 +1,66 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from functools import wraps
+from flask import Flask, render_template, make_response, request, session, url_for, flash, redirect
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 
 app = Flask(__name__)
-app.secret_key = 'secret_key'
+app.config.from_pyfile("config.py")
 
-manager = LoginManager()
-manager.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "auth"
+login_manager.login_message = "Доступ закрыт. Авторизуйтесь!"
+login_manager.login_message_category = "warning"
 
-users = {'user': {'password': 'qwerty'}}
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+app_users = [
+{"user_id": "1", "login": "user", "password": "qwerty"}
+]
 
 class User(UserMixin):
-    def __init__(self, id):
-        self.id = id
-    
-    @property
-    def is_authenticated(self):
-        return True
+    def __init__(self, user_id, login) -> None:
+        self.id = user_id
+        self.login = login
 
-    @property
-    def is_active(self):
-        return True
-
-    @property
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return str(self.id)
-
-@app.route('/')
-def index():
-    session['visits'] = session.get('visits', 0) + 1
-    return render_template('index.html', title='Главная страница')
-
-@manager.user_loader
+@login_manager.user_loader
 def load_user(user_id):
-    if user_id in users:
-        return User(user_id)
-    return None
+        for user in app_users:
+            if user_id == user["user_id"]:
+                return User(user_id, user["login"])
 
-@app.route('/auth', methods=['GET', 'POST'])
+@app.route("/")
+def index():
+    session["visits"] = session.get("visits", 0) + 1
+    title = "Главная страница"
+    return render_template("index.html", title=title)
+
+@app.route("/auth", methods=["GET", "POST"])
 def auth():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        remember = request.form.get('remember')
-        if username in users and users[username]['password'] == password:
-            user = User(username)
-            login_user(user, remember=remember)
-            flash('Вы успешно вошли', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('index')) 
-        else:
-            flash('Неверный логин или пароль', 'error')
-    return render_template('auth.html')
+    if request.method == "GET":
+        return render_template("auth.html")
 
-@app.route('/logout')
+    login = request.form.get("username", "")
+    password = request.form.get("password", "")
+    remember = request.form.get("remember", "") == "on"
+
+    for user in app_users:
+        if login == user["login"] and password == user["password"]:
+            login_user(User(user["user_id"], user["login"]), remember=remember)
+            target_page = request.args.get("next", url_for("index"))
+            return redirect(target_page)
+
+        flash("Неверный логин или пароль!", category="danger")
+    return render_template("auth.html")
+
+@app.route("/logout")
 def logout():
     logout_user()
-    flash('Вы успешно вышли из аккаунта', 'success')
-    return redirect(url_for('auth'))
+    flash("Вы успешно вышли из аккаунта!", "info")
+    return redirect(url_for("index"))
 
-def auth_message(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated:
-            flash('Для доступа к запрашиваемой странице необходимо пройти процедуру аутентификации!', 'error')
-            return redirect(url_for('auth', next=request.url))
-        return f(*args, **kwargs)
-    return decorated_function
-
-@app.route('/secret')
-@auth_message
+@app.route("/secret")
+@login_required
 def secret():
-    return render_template('secret.html', title='Секретная страница')
+    return render_template("secret.html", title="Секретная страница")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
