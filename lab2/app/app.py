@@ -1,54 +1,41 @@
-from random import randint
+
 from flask import Flask, render_template, make_response, request
-import phone_check as phonecheck
-
+import verification as validator
 app = Flask(__name__)
-
 @app.route("/")
 def index():
     url = request.url
-    title = "Lab1"
+    title = "Lab2"
     return render_template("index.html", title=title, url=url)
-
-
-@app.route("/URLparameters")
-def URLparameters():
-    title = "Параметры URL"
-    return render_template("URLparameters.html", title=title, request=request)
 
 @app.route("/headers")
 def headers():
-    title = "Параметры URL"
+    title = "HEADER"
     return render_template("headers.html", title=title, request=request)
-
-@app.route("/cookie")
-def cookie():
+@app.route("/cookies")
+def cookies():
+    title = "COOKIES"
+    return render_template("cookies.html", title=title, request=request)
+@app.route("/url")
+def url():
     title = "Параметры URL"
-    response = make_response(render_template(
-        "cookie.html", title=title, request=request))
-    if "cookie" in request.cookies:
-        response.delete_cookie("cookie")
-    else:
-        response.set_cookie("cookie", "1")
+    return render_template("url.html", title=title, request=request)
 
-    return response
+@app.route("/parameters", methods=["GET", "POST"])
+def parameters():
+    title = "ПАРАМЕТРЫ ФОРМЫ"
+    return render_template("parameters.html", title=title, request=request)
 
-@app.route("/formparameters", methods=["GET", "POST"])
-def formparameters():
-    title = "Параметры Формы"
-    return render_template("formparameters.html", title=title, request=request)
-
-@app.route("/phoneform", methods=["GET", "POST"])
-def phoneform():
-    title = "Проверка номера Телефона"
+@app.route("/phone", methods=["GET", "POST"])
+def phone():
+    title = "ВЕРИФИКАЦИЯ ПО ШАБЛОНУ"
     if request.method == "GET":
-        return render_template("phoneform.html", title=title)
-    
-    phone = request.form.get("phone", "")
-    phoneCheckResult = phonecheck.phonecheck(phone)
+        return render_template("phone.html", title=title)
 
-    if not phoneCheckResult:
-        phone = phonecheck.formatphone(phone)
-        return render_template("phoneform.html", title=title, request=request, phoneChecked=True, formattedPhone=phone)
+    phone = request.form.get("phone", "")
+    flag = validator.validate(phone)
+    if flag:
+        return render_template("phone.html", title=title, request=request, checked=True, error=flag)
     else:
-        return render_template("phoneform.html", title=title, request=request, phoneChecked=True, error=phoneCheckResult)
+        phone = validator.formats(phone)
+        return render_template("phone.html", title=title, request=request, checked=True, formatted=phone)
