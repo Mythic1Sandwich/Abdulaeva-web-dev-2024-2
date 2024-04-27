@@ -296,8 +296,3 @@ def logout():
 @login_required
 def secret():
     return render_template('secret.html')
-
-# python -m venv ve
-# . ve/bin/activate -- Linux
-# ve\Scripts\activate -- Windows
-# pip install flask python-dotenv
