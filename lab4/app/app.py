@@ -53,11 +53,6 @@ def load_user(user_id):
     
     return None
 
-    # for user_entry in get_user_list():
-    #     if user_id == user_entry["user_id"]:
-    #         return User(user_id, user_entry["login"])
-    # return None
-
 @app.route('/')
 def index():
     return render_template('index.html')
